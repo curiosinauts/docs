@@ -38,14 +38,13 @@ You can go to official VirtualBox [site](https://www.virtualbox.org/wiki/Downloa
 Vagrant is a virtual server automation CLI tool developed by HashCorp. It simplifies managing of VirtualBox instances.
 
 For Mac users, simply execute the following. Official Vagrant site is [here](https://www.vagrantup.com).
-```
+```bash
 $ brew install vagrant
 ```
 
-Test vagrant install
-```
-$ vagrant --version
-Vagrant 2.3.0
+Adding custom top level domain makes testing easiser. Install vagrant DNS plugin.
+```bash
+$ vagrant plugin install vagrant-dns
 ```
 
 ## Download k3s vagrant box
@@ -54,7 +53,7 @@ k3s is an implementation of k8s. It is well suited for produciton environment as
 vagrant box is a compressed file for vagrant. It contains a VirtualBox server image file and vagrant meta data files. Our vagrant box is from official debian project.
 
 Let's make a directory in `~/vagrant/k3s` and instruct vagrant to download our vagrant box.
-```
+```bash
 $ mkdir -p ~/vagrant/k3s
 
 $ cd ~/vagrant/k3s
@@ -65,16 +64,27 @@ $ vagrant box add debian/bullseye64 --provider virtualbox
 ## Configure vagrant instance
 Let's add a `Vagrantfile`. You can customize the binding ip address or CPU & memory allocation with this file.
 
-```
+```bash
 $ cat <<EOF>>Vagrantfile
 Vagrant.configure("2") do |config|
   config.vm.box = "debian/bullseye64"
 
   config.vm.network "private_network", ip: "192.168.56.100"
+  config.vm.network "private_network", ip: "192.168.56.101"
 
   config.vm.provider "virtualbox" do |vb|
+    vb.name   = "k3s"
     vb.memory = "4096"
   end
+
+  config.vm.hostname          = "k3s"
+
+  config.dns.tld      = "devel"
+  config.dns.patterns = [/^(\w+\.)(\w+).devel$/, /^(\w+).devel$/]
+
+  config.ssh.insert_key       = false
+  config.ssh.private_key_path = ['~/.vagrant.d/insecure_private_key', '~/.ssh/id_rsa']
+  config.vm.provision "file", source: "~/.ssh/id_rsa.pub", destination: "~/.ssh/authorized_keys"
 
   config.vm.provision "shell", inline: <<-SHELL
     apt-get update
@@ -86,15 +96,13 @@ EOF
 ```
 
 Start the vagrant instance
-```
+```bash
 $ vagrant up
 ```
 
 ## Retrieve KUBECONFIG private key
-```
-$ vagrant ssh
-
-$ sudo cat /etc/rancher/k3s/k3s.yaml
+```bash
+$ ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no vagrant@192.168.56.100 "sudo cat /etc/rancher/k3s/k3s.yaml" > ~/.kube/local.config
 ```
 
 ## Use kubectl
