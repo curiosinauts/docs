@@ -7,6 +7,8 @@ categories: []
 tags:
   - "apt"
 # menu: main # Optional, add page to a menu. Options: main, side, footer
+image: "Wavy_Tech-01_Single-10.jpg"
+draft: true
 ---
 
 ## Host server set up
@@ -34,3 +36,6 @@ sudo apt-get dist-upgrade
 ```
 
 http://apt-cache.curiosityworks.org:3142/acng-report.html?doCount=Count+Data#stats  
+
+
+[Image by vectorjuice on Freepik](https://www.freepik.com/free-vector/web-page-visualization-protocol-procedure-dynamic-software-workflow-full-stack-development-markup-administrate-system-driver-shared-memory-vector-isolated-concept-metaphor-illustration_12470220.htm#query=cache%20memory&position=0&from_view=search&track=sph")

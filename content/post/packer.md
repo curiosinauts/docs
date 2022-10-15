@@ -9,6 +9,8 @@ tags:
   - "packer"
   - "vagrant"
 # menu: main # Optional, add page to a menu. Options: main, side, footer
+image: "company-packer-employee-desk-with-laptop.jpeg"
+draft: true
 ---
 
 ## Extra
