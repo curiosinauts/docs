@@ -2,10 +2,8 @@
 # Common-Defined params
 title: "local k8s cluster inside virtualbox"
 date: "2022-10-14"
-description: "Example article description"
-categories:
-  - "cloud"
-  - "automation"
+description: "guide for setting up k8s for local development environment"
+categories: []
 tags:
   - "k3s"
   - "ansible"
@@ -14,19 +12,6 @@ tags:
   - "virtualbox"
 # menu: main # Optional, add page to a menu. Options: main, side, footer
 
-# Theme-Defined params
-# thumbnail: "img/placeholder.png" # Thumbnail image
-lead: "setup guide" # Lead text
-comments: false # Enable Disqus comments for specific page
-authorbox: false # Enable authorbox for specific page
-pager: true # Enable pager navigation (prev/next) for specific page
-toc: true # Enable Table of Contents for specific page
-mathjax: true # Enable MathJax for specific page
-sidebar: "right" # Enable sidebar (on the right side) per page
-widgets: # Enable sidebar widgets in given order per page
-  - "search"
-  - "recent"
-  - "taglist"
 ---
 
 ## Download and install VirtualBox
@@ -38,13 +23,13 @@ You can go to official VirtualBox [site](https://www.virtualbox.org/wiki/Downloa
 Vagrant is a virtual server automation CLI tool developed by HashCorp. It simplifies managing of VirtualBox instances.
 
 For Mac users, simply execute the following. Official Vagrant site is [here](https://www.vagrantup.com).
-```bash
-$ brew install vagrant
+```
+brew install vagrant
 ```
 
 Adding custom top level domain makes testing easiser. Install vagrant DNS plugin.
 ```bash
-$ vagrant plugin install vagrant-dns
+vagrant plugin install vagrant-dns
 ```
 
 ## Download k3s vagrant box
@@ -54,11 +39,11 @@ vagrant box is a compressed file for vagrant. It contains a VirtualBox server im
 
 Let's make a directory in `~/vagrant/k3s` and instruct vagrant to download our vagrant box.
 ```bash
-$ mkdir -p ~/vagrant/k3s
+mkdir -p ~/vagrant/k3s
 
-$ cd ~/vagrant/k3s
+cd ~/vagrant/k3s
 
-$ vagrant box add debian/bullseye64 --provider virtualbox
+vagrant box add debian/bullseye64 --provider virtualbox
 ```
 
 ## Configure vagrant instance
