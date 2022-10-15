@@ -100,9 +100,20 @@ Start the vagrant instance
 $ vagrant up
 ```
 
-## Retrieve KUBECONFIG private key
+## Retrieve kubeconfig file from the new cluster 
 ```bash
-$ ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no vagrant@192.168.56.100 "sudo cat /etc/rancher/k3s/k3s.yaml" > ~/.kube/local.config
+$ ssh -o UserKnownHostsFile=/dev/null \
+      -o StrictHostKeyChecking=no \
+      vagrant@192.168.56.100 "sudo cat /etc/rancher/k3s/k3s.yaml" \
+      | sed 's/127\.0\.0\.1/192\.168\.56\.100/' \
+      > ~/.kube/local.config
 ```
 
 ## Use kubectl
+```bash
+$ export KUBECONFIG=~/.kube/local.config
+
+$ kubectl get nodes
+```
+
+some material referenced from [here](https://github.com/techiescamp/vagrant-kubeadm-kubernetes)
