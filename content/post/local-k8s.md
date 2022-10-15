@@ -1,6 +1,6 @@
 ---
 # Common-Defined params
-title: "local k8s cluster inside virtualbox"
+title: "Local k8s cluster inside virtualbox"
 date: "2022-10-14"
 description: "guide for setting up k8s for local development environment"
 categories: []
@@ -11,15 +11,18 @@ tags:
   - "vagrant"
   - "virtualbox"
 # menu: main # Optional, add page to a menu. Options: main, side, footer
-
+image: "25501.jpg"
 ---
 
-## Download and install VirtualBox
+## Objective
+We want a production like k8s cluster running on local dev machine that is isolated by virtual server.
+
+### Download and install VirtualBox
 VirtualBox is the most stable open source virtualization software for local environment.
 
 You can go to official VirtualBox [site](https://www.virtualbox.org/wiki/Downloads) to download and install.
 
-## Install Vagrant
+### Install Vagrant
 Vagrant is a virtual server automation CLI tool developed by HashCorp. It simplifies managing of VirtualBox instances.
 
 For Mac users, simply execute the following. Official Vagrant site is [here](https://www.vagrantup.com).
@@ -32,7 +35,7 @@ Adding custom top level domain makes testing easiser. Install vagrant DNS plugin
 vagrant plugin install vagrant-dns
 ```
 
-## Download k3s vagrant box
+### Download k3s vagrant box
 k3s is an implementation of k8s. It is well suited for produciton environment as well as IoT edge devices. It's developed by Rancher. You can visit their [site](https://rancher.com) for more information.
 
 vagrant box is a compressed file for vagrant. It contains a VirtualBox server image file and vagrant meta data files. Our vagrant box is from official debian project.
@@ -46,7 +49,7 @@ cd ~/vagrant/k3s
 vagrant box add debian/bullseye64 --provider virtualbox
 ```
 
-## Configure vagrant instance
+## Configuration
 Let's add a `Vagrantfile`. You can customize the binding ip address or CPU & memory allocation with this file.
 
 ```bash
@@ -102,3 +105,5 @@ $ kubectl get nodes
 ```
 
 some material referenced from [here](https://github.com/techiescamp/vagrant-kubeadm-kubernetes)
+
+image designed by [starline / Freepik](https://www.freepik.com/free-vector/gorgeous-clouds-background-with-blue-sky-design_8562848.htm#query=cloud&position=30&from_view=keyword") 
