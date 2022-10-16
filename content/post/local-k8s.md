@@ -45,7 +45,7 @@ mkdir -p ~/vagrant/k8s
 
 cd ~/vagrant/k8s
 
-vagrant box add debian/bullseye64 --provider virtualbox
+vagrant box add curiosityworks/k3s --provider virtualbox
 ```
 
 ___
@@ -59,11 +59,12 @@ Let's add a `Vagrantfile`. You can customize the binding ip address or CPU & mem
 ```bash
 cat <<EOF>>Vagrantfile
 Vagrant.configure("2") do |config|
-  config.vm.box = "debian/bullseye64"
+  config.vm.box = "curiosityworks/k3s"
 
   config.vm.network "private_network", ip: "192.168.56.100"
   config.vm.network "private_network", ip: "192.168.56.101"
-
+  config.vm.network "private_network", ip: "192.168.56.102"
+  
   config.vm.provider "virtualbox" do |vb|
     vb.name   = "k3s"
     vb.memory = "4096"
@@ -77,12 +78,6 @@ Vagrant.configure("2") do |config|
   config.ssh.insert_key       = false
   config.ssh.private_key_path = ['~/.vagrant.d/insecure_private_key', '~/.ssh/id_rsa']
   config.vm.provision "file", source: "~/.ssh/id_rsa.pub", destination: "~/.ssh/authorized_keys"
-
-  config.vm.provision "shell", inline: <<-SHELL
-    apt-get update
-    apt-get install -y curl
-    curl -sfL https://get.k3s.io | sh -
-  SHELL
 end
 EOF
 ```
@@ -109,6 +104,33 @@ Use kubectl
 export KUBECONFIG=~/.kube/local.config
 
 kubectl get nodes
+```
+
+## Post Install Metallb Setup 
+```bash
+helm repo add metallb https://metallb.github.io/metallb
+
+kubectl create namespace metallb-system
+
+helm install metallb metallb/metallb --wait --namespace metallb-system
+
+cat <<EOF | kubectl apply -f -
+apiVersion: metallb.io/v1beta1
+kind: IPAddressPool
+metadata:
+  name: internal-addresses
+  namespace: metallb-system
+spec:
+  addresses:
+  - 192.168.56.101-192.168.56.200
+---
+apiVersion: metallb.io/v1beta1
+kind: L2Advertisement
+metadata:
+  name: l2
+  namespace: metallb-system
+EOF
+
 ```
 
 Header image designed by [starline / Freepik](https://www.freepik.com/free-vector/gorgeous-clouds-background-with-blue-sky-design_8562848.htm#query=cloud&position=30&from_view=keyword") 
