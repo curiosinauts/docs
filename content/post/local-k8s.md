@@ -61,13 +61,14 @@ cat <<EOF>>Vagrantfile
 Vagrant.configure("2") do |config|
   config.vm.box = "curiosityworks/k3s"
 
-  config.vm.network "private_network", ip: "192.168.56.100"
-  config.vm.network "private_network", ip: "192.168.56.101"
-  config.vm.network "private_network", ip: "192.168.56.102"
-  
+  (100..102).each do |i|
+  config.vm.network "private_network", ip: "192.168.56." + "#{i}"
+  end
+
   config.vm.provider "virtualbox" do |vb|
     vb.name   = "k3s"
     vb.memory = "4096"
+    vb.cpus   = 6
   end
 
   config.vm.hostname          = "k3s"
@@ -80,6 +81,7 @@ Vagrant.configure("2") do |config|
   config.vm.provision "file", source: "~/.ssh/id_rsa.pub", destination: "~/.ssh/authorized_keys"
 end
 EOF
+
 ```
 
 Start the vagrant instance
@@ -94,7 +96,7 @@ ssh -o UserKnownHostsFile=/dev/null \
     -o StrictHostKeyChecking=no \
     vagrant@192.168.56.100 "sudo cat /etc/rancher/k3s/k3s.yaml" \
     | sed 's/127\.0\.0\.1/192\.168\.56\.100/' \
-    > ~/.kube/local.config
+    | sed 's/default/local/g' > ~/.kube/local.config
 ```
 ___
 
@@ -122,7 +124,7 @@ metadata:
   namespace: metallb-system
 spec:
   addresses:
-  - 192.168.56.101-192.168.56.200
+  - 192.168.56.101-192.168.56.107
 ---
 apiVersion: metallb.io/v1beta1
 kind: L2Advertisement
