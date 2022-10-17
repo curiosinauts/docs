@@ -65,10 +65,16 @@ Vagrant.configure("2") do |config|
   config.vm.network "private_network", ip: "192.168.56." + "#{i}"
   end
 
-  config.vm.provider "virtualbox" do |vb|
+  config.vm.provider "virtualbox" do |vb, override|
     vb.name   = "k3s"
     vb.memory = "4096"
     vb.cpus   = 6
+    vb.customize [
+      "modifyvm", :id,
+      "--natdnshostresolver1", "on",
+      # some systems also need this:
+      # "--natdnshostresolver2", "on"
+    ]
   end
 
   config.vm.hostname          = "k3s"
@@ -124,7 +130,7 @@ metadata:
   namespace: metallb-system
 spec:
   addresses:
-  - 192.168.56.101-192.168.56.107
+  - 192.168.56.100-192.168.56.107
 ---
 apiVersion: metallb.io/v1beta1
 kind: L2Advertisement
@@ -133,6 +139,36 @@ metadata:
   namespace: metallb-system
 EOF
 
+```
+
+### Install test Nginx
+```
+helm repo add bitnami https://charts.bitnami.com/bitnami
+
+helm install nginx bitnami/nginx --set service.type="ClusterIP" --wait
+```
+
+### Add ingress 
+```
+cat <<EOF | kubectl apply -f -
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: app 
+  namespace: default
+spec:
+  rules:
+  - host: my.app.devel
+    http:
+      paths:
+      - backend:
+          service:
+            name: nginx 
+            port:
+              name: http
+        path: /
+        pathType: Prefix
+EOF
 ```
 
 Header image designed by [starline / Freepik](https://www.freepik.com/free-vector/gorgeous-clouds-background-with-blue-sky-design_8562848.htm#query=cloud&position=30&from_view=keyword") 
